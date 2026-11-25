@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stripe Fee Reverse Calculator — Pass Fees to Clients</title>
+  <meta name="description" content="Free Stripe fee reverse calculator for US, UK, Canada, Australia, and EU. Find out how much to charge to cover Stripe fees and keep your exact payout.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://example.com/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Stripe Fee Reverse Calculator — Pass Fees to Clients">
+  <meta property="og:description" content="Free Stripe fee reverse calculator for US, UK, Canada, Australia, and EU. Find out how much to charge to cover Stripe fees and keep your exact payout.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://example.com/">
+  <meta property="og:site_name" content="Stripe Fee Reverse Calculator">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Stripe Fee Reverse Calculator — Pass Fees to Clients">
+  <meta name="twitter:description" content="Calculate how much to charge to cover Stripe fees across the US, UK, Canada, Australia, and Europe.">
+
+  <!-- Inline SVG Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635BFF'/%3E%3Cpath d='M18 39c0 5.2 4.8 8.5 12.6 8.5 8.1 0 13.4-3.7 13.4-9.8 0-5.4-3.7-8.2-11.2-9.5l-3.6-.6c-3.4-.6-4.7-1.6-4.7-3.4 0-2.1 2-3.5 5.4-3.5 3.6 0 6 1.5 6.4 4.2h6.5c-.5-6-5.2-9.6-12.7-9.6-7.4 0-12.3 3.8-12.3 9.4 0 5 3.5 7.9 10.6 9.1l3.6.6c3.8.6 5.2 1.7 5.2 3.7 0 2.3-2.4 3.9-6.2 3.9-4.1 0-6.7-1.6-7.1-4.5H18z' fill='%23FFFFFF'/%3E%3Ccircle cx='49' cy='15' r='5' fill='%23A5B4FC'/%3E%3C/svg%3E">
+
+  <!-- Structured Data: WebApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Stripe Fee Reverse Calculator",
+    "url": "https://example.com/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript",
+    "description": "A real-time Stripe fee reverse calculator that computes how much to charge to cover Stripe fees across US, UK, Canada, Australia, and Eurozone card rates.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+
+  <!-- Structured Data: FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is it legal to pass Stripe processing fees on to clients?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "It depends on where your client is located and whether you bill consumers or businesses. In the US, most states allow credit card surcharges up to 3% or 4% with clear disclosure, though Connecticut, Massachusetts, and Puerto Rico restrict them, and debit card surcharges are banned nationwide. In the UK and EU, consumer card surcharges are banned under PSD2, though B2B surcharging has narrower rules. Australia allows surcharges capped at your actual cost of acceptance, and Canada permits credit card surcharges with advance notice outside Quebec. For freelancers and agencies, the cleanest approach is to bake payment processing into your quoted rate rather than listing a separate card fee line item."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much should I charge to cover Stripe fees on international cards?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Stripe adds 1.5% when a customer pays with a card issued outside your country, plus another 1.0% if currency conversion is required. For a US business on the standard 2.9% + $0.30 plan, that pushes the rate to 4.4% + $0.30 for an international card in USD, or 5.4% + $0.30 when converting currencies. Select the International Card and Currency Conversion checkboxes in the calculator to compute the exact invoice total."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Stripe return processing fees if I refund a client?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. When you issue a full or partial refund through Stripe, the original processing fee is not returned to your account. If you refunded a $1,030.18 invoice, your client gets $1,030.18 back and Stripe still keeps the $30.18 fee. Factor that risk into your cancellation terms and milestone deposits."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Should I use ACH or bank transfers instead of cards for large invoices?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For invoices over $500, bank transfers usually save a significant amount of money. Stripe ACH Direct Debit in the US costs 0.8% capped at $5.00 per transaction. On a $5,000 invoice, a credit card costs $149.64 in fees while ACH costs $5.00 flat. Similar low-cost options exist in other regions, including SEPA Direct Debit in the Eurozone, BACS in the UK, and EFT in Canada."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why is my actual Stripe fee slightly different from 2.9% + $0.30?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Your real fee can be higher if you type card numbers in manually (+0.5%), use Stripe Invoicing or Stripe Billing (+0.4% to +0.8%), accept international cards (+1.5%), or convert currencies (+1.0%). High-volume merchants on custom IC+ pricing may pay less. Choose Custom Rate in the region dropdown to enter the exact percentage and fixed fee shown on your Stripe payout statement."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --surface-subtle: #F1F5F9;
+      --border: #E2E8F0;
+      --border-strong: #CBD5E1;
+      --text: #0F172A;
+      --text-secondary: #334155;
+      --text-muted: #64748B;
+      --accent: #635BFF;
+      --accent-hover: #4F46E5;
+      --accent-soft: #EEF2FF;
+      --accent-border: #C7D2FE;
+      --success: #0F766E;
+      --success-bg: #F0FDFA;
+      --danger: #B91C1C;
+      --danger-bg: #FEF2F2;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-card: 0 10px 30px -12px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04);
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-sm: 8px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      height: 60px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .brand-mark {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .nav-links {
+      display: none;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: color 150ms var(--ease);
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    .header-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 14px;
+      min-height: 36px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: border-color 150ms var(--ease), background-color 150ms var(--ease), color 150ms var(--ease);
+    }
+
+    .header-cta:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .header-cta:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    summary:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 40px 0 28px;
+    }
+
+    .hero-head {
+      max-width: 720px;
+      margin-bottom: 28px;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(1.85rem, 3.6vw, 2.75rem);
+      font-weight: 750;
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      text-wrap: balance;
+    }
+
+    .hero-lead {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      max-width: 64ch;
+    }
+
+    /* Calculator Shell */
+    .calc-shell {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    .calc-inputs {
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .calc-output {
+      padding: 24px 20px;
+      background: #F8FAFC;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    /* Mode Segmented Control */
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .field-hint {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      padding: 4px;
+      background: var(--surface-subtle);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .seg-btn {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 12px;
+      min-height: 44px;
+      border-radius: 7px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 160ms var(--ease), color 160ms var(--ease), box-shadow 160ms var(--ease);
+    }
+
+    .seg-btn:hover {
+      color: var(--text);
+    }
+
+    .seg-btn[aria-pressed="true"] {
+      background: var(--surface);
+      color: var(--accent);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Amount Input */
+    .money-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .currency-prefix {
+      position: absolute;
+      left: 14px;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-muted);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .input-control,
+    .select-control {
+      width: 100%;
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      min-height: 46px;
+      padding: 10px 14px;
+      transition: border-color 150ms var(--ease), box-shadow 150ms var(--ease);
+    }
+
+    .input-control:hover,
+    .select-control:hover {
+      border-color: #94A3B8;
+    }
+
+    .input-control:focus,
+    .select-control:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.16);
+    }
+
+    .money-input {
+      padding-left: 48px;
+      font-size: 22px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      min-height: 54px;
+      letter-spacing: -0.01em;
+      -moz-appearance: textfield;
+    }
+
+    .money-input::-webkit-outer-spin-button,
+    .money-input::-webkit-inner-spin-button,
+    .compact-input-wrap .input-control::-webkit-outer-spin-button,
+    .compact-input-wrap .input-control::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .compact-input-wrap .input-control {
+      -moz-appearance: textfield;
+    }
+
+    .quick-amounts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .quick-btn {
+      appearance: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 11px;
+      min-height: 34px;
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: border-color 140ms var(--ease), color 140ms var(--ease), background-color 140ms var(--ease);
+    }
+
+    .quick-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .select-control {
+      appearance: none;
+      padding-right: 38px;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px;
+    }
+
+    /* Custom Rate Grid */
+    .custom-rate-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    .custom-rate-grid[hidden] {
+      display: none;
+    }
+
+    .compact-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .compact-input-wrap .input-control {
+      min-height: 42px;
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+    }
+
+    .input-affix-right {
+      position: absolute;
+      right: 12px;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 600;
+      pointer-events: none;
+    }
+
+    .input-affix-left {
+      position: absolute;
+      left: 12px;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 600;
+      pointer-events: none;
+    }
+
+    .has-left {
+      padding-left: 30px;
+    }
+
+    .has-right {
+      padding-right: 30px;
+    }
+
+    /* Add-ons Checkboxes */
+    .addons-fieldset {
+      border: 0;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .addons-fieldset legend {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+      padding: 0;
+    }
+
+    .addon-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .addon-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 11px 14px;
+      min-height: 46px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      cursor: pointer;
+      transition: border-color 140ms var(--ease), background-color 140ms var(--ease);
+    }
+
+    .addon-item:hover {
+      border-color: var(--border-strong);
+      background: #FCFDFE;
+    }
+
+    .addon-item.is-checked {
+      border-color: var(--accent-border);
+      background: var(--accent-soft);
+    }
+
+    .addon-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .addon-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      accent-color: var(--accent);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .addon-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .addon-rate {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .validation-alert {
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--danger-bg);
+      color: var(--danger);
+      font-size: 13px;
+      font-weight: 500;
+      border: 1px solid #FECACA;
+    }
+
+    .validation-alert[hidden] {
+      display: none;
+    }
+
+    /* Output Card */
+    .output-primary {
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .output-eyebrow {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .output-figure-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .output-big {
+      font-size: clamp(2.1rem, 4.2vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      word-break: break-word;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 18px;
+      min-height: 44px;
+      border: 0;
+      border-radius: var(--radius-sm);
+      background: var(--accent);
+      color: #FFFFFF;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 150ms var(--ease), transform 120ms var(--ease);
+    }
+
+    .copy-btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .copy-btn:active {
+      transform: translateY(1px);
+    }
+
+    .copy-btn.copied {
+      background: var(--success);
+    }
+
+    .copy-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .output-subnote {
+      margin: 10px 0 0;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Metrics Breakdown */
+    .metrics-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .metric-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .metric-row:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .metric-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .metric-val {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      text-align: right;
+    }
+
+    .metric-val.is-fee {
+      color: #B45309;
+    }
+
+    .metric-val.is-net {
+      color: var(--success);
+    }
+
+    .proof-strip {
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .proof-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .proof-eq {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      font-size: 12.5px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* Visual Split Bar */
+    .split-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .split-bar {
+      height: 8px;
+      width: 100%;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .split-net {
+      height: 100%;
+      background: var(--accent);
+      transition: width 180ms var(--ease);
+    }
+
+    .split-fee {
+      height: 100%;
+      background: #F59E0B;
+      transition: width 180ms var(--ease);
+    }
+
+    .split-legend {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rate-summary {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .rate-summary strong {
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Editorial Sections */
+    .content-section {
+      padding: 48px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .content-section:first-of-type {
+      border-top: 0;
+      padding-top: 52px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+      font-weight: 750;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-wrap: balance;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .prose {
+      max-width: 72ch;
+      color: var(--text-secondary);
+    }
+
+    .prose p {
+      margin: 0 0 14px;
+    }
+
+    .prose p:last-child {
+      margin-bottom: 0;
+    }
+
+    .formula-box {
+      margin: 22px 0;
+      padding: 18px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--text);
+      overflow-x: auto;
+    }
+
+    .examples-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .example-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+
+    .example-card p {
+      margin: 0 0 10px;
+      font-size: 14.5px;
+      color: var(--text-secondary);
+    }
+
+    .example-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .example-math {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      font-size: 13.5px;
+      color: var(--text);
+      background: var(--bg);
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      margin-top: 10px;
+      line-height: 1.65;
+    }
+
+    /* Reference Table */
+    .table-intro {
+      max-width: 68ch;
+      color: var(--text-secondary);
+      margin: 0 0 20px;
+    }
+
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 520px;
+      font-size: 14.5px;
+    }
+
+    thead th {
+      text-align: left;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg);
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    tbody tr:hover {
+      background: #F8FAFC;
+    }
+
+    .num {
+      text-align: right;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .num-strong {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .num-accent {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .row-use-btn {
+      appearance: none;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: border-color 140ms var(--ease), color 140ms var(--ease), background-color 140ms var(--ease);
+    }
+
+    .row-use-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    /* FAQ */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .faq-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .faq-item summary {
+      list-style: none;
+      padding: 18px 20px;
+      font-size: 15.5px;
+      font-weight: 650;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .faq-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-chevron {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      color: var(--text-muted);
+      transition: transform 160ms var(--ease);
+    }
+
+    .faq-item[open] .faq-chevron {
+      transform: rotate(180deg);
+      color: var(--accent);
+    }
+
+    .faq-body {
+      padding: 0 20px 18px;
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.65;
+      max-width: 74ch;
+    }
+
+    .faq-body p {
+      margin: 0;
+    }
+
+    /* Footer */
+    .site-footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 28px 0 36px;
+      margin-top: 24px;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        padding: 0 28px;
+      }
+
+      .nav-links {
+        display: flex;
+      }
+
+      .hero {
+        padding: 48px 0 36px;
+      }
+
+      .calc-grid {
+        grid-template-columns: 1.08fr 0.92fr;
+        align-items: stretch;
+      }
+
+      .calc-inputs {
+        padding: 28px 30px;
+      }
+
+      .calc-output {
+        padding: 28px 30px;
+        border-top: 0;
+        border-left: 1px solid var(--border);
+      }
+
+      .examples-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .footer-inner {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#calculator" class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </span>
+        <span>Stripe Fee Reverse Calculator</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="#calculator">Calculator</a>
+        <a href="#the-math">The Math</a>
+        <a href="#reference-table">Rate Table</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <button type="button" class="header-cta" id="resetBtn">Reset</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="calculator" aria-labelledby="page-title">
+      <div class="container">
+        <div class="hero-head">
+          <div class="hero-meta">
+            <span>US, UK, CA, AU &amp; EU</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Standard Stripe card rates</span>
+          </div>
+          <h1 id="page-title">Stripe Fee Reverse Calculator</h1>
+          <p class="hero-lead">
+            Use this Stripe fee reverse calculator to work out the exact invoice total to bill your client so you receive the full payout you quoted after Stripe takes its cut.
+          </p>
+        </div>
+
+        <div class="calc-shell">
+          <div class="calc-grid">
+            <!-- Left Column: Inputs -->
+            <div class="calc-inputs">
+              <div class="field-group">
+                <span class="field-label" id="mode-label">Calculation Mode</span>
+                <div class="segmented" role="group" aria-labelledby="mode-label">
+                  <button type="button" class="seg-btn" id="modeReverse" aria-pressed="true" data-mode="reverse">
+                    Pass Fees to Client
+                  </button>
+                  <button type="button" class="seg-btn" id="modeStandard" aria-pressed="false" data-mode="standard">
+                    Deduct Fees
+                  </button>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="amountInput" id="amountLabel">
+                  <span>Desired Net Payout</span>
+                  <span class="field-hint" id="amountHint">What you want to keep</span>
+                </label>
+                <div class="money-wrap">
+                  <span class="currency-prefix" id="currencyPrefix" aria-hidden="true">$</span>
+                  <input
+                    id="amountInput"
+                    class="input-control money-input"
+                    type="number"
+                    inputmode="decimal"
+                    min="0"
+                    step="0.01"
+                    value="1000"
+                    placeholder="0.00"
+                    aria-describedby="amountHint"
+                  >
+                </div>
+                <div class="quick-amounts" aria-label="Quick amount presets">
+                  <button type="button" class="quick-btn" data-preset-amount="100">100</button>
+                  <button type="button" class="quick-btn" data-preset-amount="500">500</button>
+                  <button type="button" class="quick-btn" data-preset-amount="1000">1,000</button>
+                  <button type="button" class="quick-btn" data-preset-amount="2500">2,500</button>
+                  <button type="button" class="quick-btn" data-preset-amount="5000">5,000</button>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="regionSelect">
+                  <span>Region &amp; Base Stripe Rate</span>
+                </label>
+                <select id="regionSelect" class="select-control">
+                  <option value="us" selected>United States (2.9% + $0.30)</option>
+                  <option value="uk_domestic">United Kingdom — UK Cards (1.5% + £0.20)</option>
+                  <option value="uk_eu">United Kingdom — EU Cards (2.5% + £0.20)</option>
+                  <option value="ca">Canada (2.9% + CA$0.30)</option>
+                  <option value="au">Australia (1.75% + A$0.30)</option>
+                  <option value="eu">Europe / Eurozone (1.5% + €0.25)</option>
+                  <option value="custom">Custom Rate (Enter your own % + fixed fee)</option>
+                </select>
+              </div>
+
+              <div class="custom-rate-grid" id="customRateBox" hidden>
+                <div class="field-group">
+                  <label class="field-label" for="customPct">Percentage Fee</label>
+                  <div class="compact-input-wrap">
+                    <input
+                      id="customPct"
+                      class="input-control has-right"
+                      type="number"
+                      inputmode="decimal"
+                      min="0"
+                      max="99.9"
+                      step="0.05"
+                      value="2.9"
+                    >
+                    <span class="input-affix-right" aria-hidden="true">%</span>
+                  </div>
+                </div>
+                <div class="field-group">
+                  <label class="field-label" for="customFixed">Fixed Fee</label>
+                  <div class="compact-input-wrap">
+                    <span class="input-affix-left" aria-hidden="true">$</span>
+                    <input
+                      id="customFixed"
+                      class="input-control has-left"
+                      type="number"
+                      inputmode="decimal"
+                      min="0"
+                      step="0.01"
+                      value="0.30"
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <fieldset class="addons-fieldset">
+                <legend>Optional Stripe Add-ons</legend>
+                <div class="addon-list">
+                  <label class="addon-item" for="addonInternational">
+                    <span class="addon-left">
+                      <input type="checkbox" id="addonInternational" data-addon-pct="1.5">
+                      <span class="addon-name">International Card</span>
+                    </span>
+                    <span class="addon-rate">+1.5%</span>
+                  </label>
+                  <label class="addon-item" for="addonCurrency">
+                    <span class="addon-left">
+                      <input type="checkbox" id="addonCurrency" data-addon-pct="1.0">
+                      <span class="addon-name">Currency Conversion</span>
+                    </span>
+                    <span class="addon-rate">+1.0%</span>
+                  </label>
+                  <label class="addon-item" for="addonManual">
+                    <span class="addon-left">
+                      <input type="checkbox" id="addonManual" data-addon-pct="0.5">
+                      <span class="addon-name">Manually Entered Card</span>
+                    </span>
+                    <span class="addon-rate">+0.5%</span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <div class="validation-alert" id="validationMsg" role="alert" hidden></div>
+            </div>
+
+            <!-- Right Column: Output Card -->
+            <div class="calc-output" aria-live="polite">
+              <div>
+                <div class="output-primary">
+                  <div class="output-eyebrow" id="primaryOutputLabel">Amount to Charge Client</div>
+                  <div class="output-figure-row">
+                    <div class="output-big" id="primaryOutputValue">$1,030.18</div>
+                    <button type="button" class="copy-btn" id="copyBtn">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                      </svg>
+                      <span id="copyBtnText">Copy Amount</span>
+                    </button>
+                  </div>
+                  <p class="output-subnote" id="outputSubnote">
+                    Invoice your client $1,030.18 so $1,000.00 lands in your bank account.
+                  </p>
+                </div>
+
+                <ul class="metrics-list" style="margin-top: 18px;">
+                  <li class="metric-row">
+                    <span class="metric-label">Total Stripe Fee</span>
+                    <span class="metric-val is-fee" id="feeOutput">$30.18</span>
+                  </li>
+                  <li class="metric-row">
+                    <span class="metric-label">Effective Fee %</span>
+                    <span class="metric-val" id="effectivePctOutput">2.93%</span>
+                  </li>
+                  <li class="metric-row">
+                    <span class="metric-label" id="counterpartLabel">Your Net Payout</span>
+                    <span class="metric-val is-net" id="counterpartOutput">$1,000.00</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="proof-strip">
+                <span class="proof-label">Live fee check</span>
+                <span class="proof-eq" id="proofEquation">$1,030.18 &times; 2.9% + $0.30 = $30.18 fee &rarr; $1,000.00 net</span>
+              </div>
+
+              <div class="split-wrap">
+                <div class="split-bar" aria-hidden="true">
+                  <div class="split-net" id="barNet" style="width: 97.07%;"></div>
+                  <div class="split-fee" id="barFee" style="width: 2.93%;"></div>
+                </div>
+                <div class="split-legend">
+                  <span id="legendNet">You keep 97.07%</span>
+                  <span id="legendFee">Stripe takes 2.93%</span>
+                </div>
+                <div class="rate-summary">
+                  <span>Applied fee formula</span>
+                  <strong id="appliedFormulaText">2.9% + $0.30</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <span class="sr-only" id="copyLiveStatus" role="status" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <article class="content-section" id="the-math">
+      <div class="container">
+        <h2>How Much to Charge to Cover Stripe Fees (The Exact Math)</h2>
+        <div class="prose">
+          <p>
+            Most freelancers try to pass Stripe fees along by adding 2.9% and $0.30 to their invoice. It looks right on paper, yet you'll still end up short when the payout hits your bank account.
+          </p>
+          <p>
+            Why? Because Stripe doesn't calculate 2.9% on your original rate. It takes 2.9% of the <em>entire</em> amount your client pays—including the extra fee you just tacked on. You end up paying a fee on the fee.
+          </p>
+          <p>
+            To figure out how much to charge to cover Stripe fees down to the exact cent, divide your target payout (plus the fixed fee) by 1 minus the percentage rate:
+          </p>
+        </div>
+
+        <div class="formula-box" role="note" aria-label="Reverse Stripe fee formula">
+          Total to Charge = (Desired Net Payout + Fixed Fee) &divide; (1 &minus; Percentage Rate)
+        </div>
+
+        <div class="examples-grid">
+          <div class="example-card">
+            <h3>Example 1: You want to keep $100.00 (US rate)</h3>
+            <p>
+              If you just add 2.9% + $0.30, you'd bill <strong>$103.20</strong>. Stripe then deducts 2.9% of $103.20 plus $0.30 ($3.29), leaving you with $99.91—nine cents short.
+            </p>
+            <div class="example-math">
+              ($100.00 + $0.30) &divide; (1 &minus; 0.029) = $100.30 &divide; 0.971 = <strong>$103.30</strong><br>
+              Stripe fee on $103.30 = $3.30 &rarr; You keep <strong>$100.00</strong>
+            </div>
+          </div>
+
+          <div class="example-card">
+            <h3>Example 2: You want to keep $1,000.00 (US rate)</h3>
+            <p>
+              Simple markup math gives <strong>$1,029.30</strong>. Stripe charges $30.15 on that total, dropping your payout to $999.15. Using the reverse formula fixes the gap cleanly.
+            </p>
+            <div class="example-math">
+              ($1,000.00 + $0.30) &divide; (1 &minus; 0.029) = $1,000.30 &divide; 0.971 = <strong>$1,030.18</strong><br>
+              Stripe fee on $1,030.18 = $30.18 &rarr; You keep <strong>$1,000.00</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <section class="content-section" id="reference-table" aria-labelledby="table-heading">
+      <div class="container">
+        <h2 id="table-heading">Quick Reference Table (US Standard Rate: 2.9% + $0.30)</h2>
+        <p class="table-intro">
+          Common freelance, retainer, and SaaS invoice targets at Stripe's standard US domestic card rate. Click any row's button to load that payout straight into the calculator.
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Desired Net Payout</th>
+                <th scope="col" class="num">Amount to Charge Client</th>
+                <th scope="col" class="num">Total Stripe Fee</th>
+                <th scope="col" class="num">Effective Fee %</th>
+                <th scope="col" class="num">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="num-strong">$50.00</td>
+                <td class="num num-accent">$51.80</td>
+                <td class="num">$1.80</td>
+                <td class="num">3.47%</td>
+                <td class="num"><button type="button" class="row-use-btn" data-load-us="50">Load $50</button></td>
+              </tr>
+              <tr>
+                <td class="num-strong">$100.00</td>
+                <td class="num num-accent">$103.30</td>
+                <td class="num">$3.30</td>
+                <td class="num">3.19%</td>
+                <td class="num"><button type="button" class="row-use-btn" data-load-us="100">Load $100</button></td>
+              </tr>
+              <tr>
+                <td class="num-strong">$250.00</td>
+                <td class="num num-accent">$257.78</td>
+                <td class="num">$7.78</td>
+                <td class="num">3.02%</td>
+                <td class="num"><button type="button" class="row-use-btn" data-load-us="250">Load $250</button></td>
+              </tr>
+              <tr>
+                <td class="num-strong">$500.00</td>
+                <td class="num num-accent">$515.24</td>
+                <td class="num">$15.24</td>
+                <td class="num">2.96%</td>
+                <td class="num"><button type="button" class="row-use-btn" data-load-us="500">Load $500</button></td>
+              </tr>
+              <tr>
+                <td class="num-strong">$1,000.00</td>
+                <td class="num num-accent">$1,030.18</td>
+                <td class="num">$30.18</td>
+                <td class="num">2.93%</td>
+                <td class="num"><button type="button" class="row-use-btn" data-load-us="1000">Load $1,000</button></td>
+              </tr>
+              <tr>
+                <td class="num-strong">$2,500.00</td>
+                <td class="num num-accent">$2,574.97</td>
+                <td class="num">$74.97</td>
+                <td class="num">2.91%</td>
+                <td class="num"><button type="button" class="row-use-btn" data-load-us="2500">Load $2,500</button></td>
+              </tr>
+              <tr>
+                <td class="num-strong">$5,000.00</td>
+                <td class="num num-accent">$5,149.64</td>
+                <td class="num">$149.64</td>
+                <td class="num">2.91%</td>
+                <td class="num"><button type="button" class="row-use-btn" data-load-us="5000">Load $5,000</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="faq" aria-labelledby="faq-heading">
+      <div class="container">
+        <h2 id="faq-heading">Practical Billing Questions (FAQ)</h2>
+        <div class="faq-list">
+          <details class="faq-item" open>
+            <summary>
+              <span>Is it legal to pass Stripe processing fees on to clients?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </summary>
+            <div class="faq-body">
+              <p>
+                It depends on where your client lives and whether you're billing consumers or businesses. In the US, most states allow credit card surcharges (capped at 3% to 4% by card networks) if you disclose them upfront, though Connecticut, Massachusetts, and Puerto Rico restrict them and debit card surcharges are banned nationwide. In the UK and EU, consumer card surcharges are illegal under PSD2. Australia caps surcharges at your actual cost of acceptance, and Canada permits credit card surcharges with advance notice outside Quebec. In practice, most experienced consultants don't add a "credit card fee" line item at all—they build the ~3% processing cost directly into their quoted project price.
+              </p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span>How much should I charge to cover Stripe fees on international cards?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </summary>
+            <div class="faq-body">
+              <p>
+                When a client pays with a card issued outside your country, Stripe tacks on an extra 1.5%. If Stripe also converts the payment into your local currency, expect another 1.0%. For a US business, that turns a 2.9% + $0.30 domestic card into 4.4% + $0.30 (international only) or 5.4% + $0.30 (international plus FX conversion). Tick the two matching add-on checkboxes above before sending cross-border quotes.
+              </p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span>Does Stripe return processing fees if I refund a client?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </summary>
+            <div class="faq-body">
+              <p>
+                No. Stripe keeps the original processing fee on both full and partial refunds. If a client pays a $1,030.18 invoice and you later refund the full amount, the client gets $1,030.18 back while you eat the $30.18 fee out of pocket. Make sure your contract specifies non-refundable deposits before kicking off large projects.
+              </p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span>Should I use ACH or bank transfers instead of cards for large invoices?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </summary>
+            <div class="faq-body">
+              <p>
+                Yes—once an invoice passes $500, card fees add up fast. In the US, Stripe ACH Direct Debit costs 0.8% and caps out at $5.00 per payment. On a $5,000 retainer, that's $5.00 instead of $149.64. If you bill clients in Europe, the UK, or Canada, look at SEPA Direct Debit, BACS, or direct bank wires/EFT for big milestones.
+              </p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span>Why is my actual Stripe fee slightly different from 2.9% + $0.30?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </summary>
+            <div class="faq-body">
+              <p>
+                A few extra Stripe products layer small percentages on top of base card processing: manually typed cards add 0.5%, Stripe Invoicing adds 0.4% to 0.5%, and Stripe Billing for recurring subscriptions adds 0.7%. On the flip side, negotiated volume accounts can pay less. Pick "Custom Rate" in the dropdown above to plug in the exact numbers from your Stripe dashboard.
+              </p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        Independent tool for freelancers, agencies, and founders. Not affiliated with Stripe, Inc. Always confirm current pricing in your Stripe dashboard.
+      </div>
+      <div class="footer-links">
+        <a href="#calculator">Calculator</a>
+        <a href="#the-math">Formula</a>
+        <a href="#reference-table">US Rate Table</a>
+        <a href="#faq">FAQ</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var PRESETS = {
+        us: { label: 'United States', pct: 2.9, fixed: 0.30, symbol: '$', code: 'USD' },
+        uk_domestic: { label: 'United Kingdom (UK Cards)', pct: 1.5, fixed: 0.20, symbol: '£', code: 'GBP' },
+        uk_eu: { label: 'United Kingdom (EU Cards)', pct: 2.5, fixed: 0.20, symbol: '£', code: 'GBP' },
+        ca: { label: 'Canada', pct: 2.9, fixed: 0.30, symbol: 'CA$', code: 'CAD' },
+        au: { label: 'Australia', pct: 1.75, fixed: 0.30, symbol: 'A$', code: 'AUD' },
+        eu: { label: 'Europe / Eurozone', pct: 1.5, fixed: 0.25, symbol: '€', code: 'EUR' },
+        custom: { label: 'Custom Rate', pct: 2.9, fixed: 0.30, symbol: '$', code: 'USD' }
+      };
+
+      function roundCents(value) {
+        return Math.round((value + Number.EPSILON) * 100) / 100;
+      }
+
+      function calculateStripeFees(params) {
+        var mode = params.mode === 'standard' ? 'standard' : 'reverse';
+        var amount = Number(params.amount);
+        var pct = Number(params.pct);
+        var fixed = Number(params.fixed);
+
+        if (!isFinite(pct) || pct < 0 || pct >= 100) {
+          return { valid: false, error: 'Percentage rate must be between 0% and 99.99%.' };
+        }
+        if (!isFinite(fixed) || fixed < 0) {
+          return { valid: false, error: 'Fixed fee must be 0 or greater.' };
+        }
+        if (!isFinite(amount) || amount <= 0) {
+          return {
+            valid: true,
+            mode: mode,
+            charge: 0,
+            fee: 0,
+            net: 0,
+            effectivePct: 0,
+            totalPct: pct,
+            fixed: fixed
+          };
+        }
+
+        var rate = pct / 100;
+        var charge = 0;
+        var fee = 0;
+        var net = 0;
+
+        if (mode === 'reverse') {
+          var rawCharge = (amount + fixed) / (1 - rate);
+          charge = roundCents(rawCharge);
+          fee = roundCents(charge - amount);
+          net = roundCents(amount);
+        } else {
+          charge = roundCents(amount);
+          fee = roundCents(charge * rate + fixed);
+          net = roundCents(charge - fee);
+        }
+
+        var effectivePct = charge > 0 ? (fee / charge) * 100 : 0;
+
+        return {
+          valid: true,
+          mode: mode,
+          charge: charge,
+          fee: fee,
+          net: net,
+          effectivePct: effectivePct,
+          totalPct: pct,
+          fixed: fixed
+        };
+      }
+
+      function formatMoney(value, symbol) {
+        var isNeg = value < 0;
+        var abs = Math.abs(value);
+        var formatted = abs.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+        return (isNeg ? '-' : '') + symbol + formatted;
+      }
+
+      function formatPct(value) {
+        return Number(value).toFixed(2) + '%';
+      }
+
+      function formatRatePct(value) {
+        var rounded = Math.round(value * 100) / 100;
+        return String(rounded) + '%';
+      }
+
+      // Expose pure calculator function for automated verification
+      window.__stripeCalc = {
+        PRESETS: PRESETS,
+        calculateStripeFees: calculateStripeFees,
+        formatMoney: formatMoney
+      };
+
+      var state = {
+        mode: 'reverse',
+        region: 'us',
+        copyTimer: null,
+        lastCopyValue: '1030.18'
+      };
+
+      var el = {
+        modeReverse: document.getElementById('modeReverse'),
+        modeStandard: document.getElementById('modeStandard'),
+        amountLabel: document.getElementById('amountLabel'),
+        amountHint: document.getElementById('amountHint'),
+        amountInput: document.getElementById('amountInput'),
+        currencyPrefix: document.getElementById('currencyPrefix'),
+        regionSelect: document.getElementById('regionSelect'),
+        customRateBox: document.getElementById('customRateBox'),
+        customPct: document.getElementById('customPct'),
+        customFixed: document.getElementById('customFixed'),
+        addons: Array.prototype.slice.call(document.querySelectorAll('input[data-addon-pct]')),
+        validationMsg: document.getElementById('validationMsg'),
+        primaryOutputLabel: document.getElementById('primaryOutputLabel'),
+        primaryOutputValue: document.getElementById('primaryOutputValue'),
+        outputSubnote: document.getElementById('outputSubnote'),
+        counterpartLabel: document.getElementById('counterpartLabel'),
+        counterpartOutput: document.getElementById('counterpartOutput'),
+        feeOutput: document.getElementById('feeOutput'),
+        effectivePctOutput: document.getElementById('effectivePctOutput'),
+        proofEquation: document.getElementById('proofEquation'),
+        barNet: document.getElementById('barNet'),
+        barFee: document.getElementById('barFee'),
+        legendNet: document.getElementById('legendNet'),
+        legendFee: document.getElementById('legendFee'),
+        appliedFormulaText: document.getElementById('appliedFormulaText'),
+        copyBtn: document.getElementById('copyBtn'),
+        copyBtnText: document.getElementById('copyBtnText'),
+        copyLiveStatus: document.getElementById('copyLiveStatus'),
+        resetBtn: document.getElementById('resetBtn')
+      };
+
+      function getActiveRate() {
+        var preset = PRESETS[state.region] || PRESETS.us;
+        var basePct = state.region === 'custom' ? parseFloat(el.customPct.value) : preset.pct;
+        var baseFixed = state.region === 'custom' ? parseFloat(el.customFixed.value) : preset.fixed;
+        var addonPct = 0;
+
+        el.addons.forEach(function (checkbox) {
+          var row = checkbox.closest('.addon-item');
+          if (checkbox.checked) {
+            addonPct += parseFloat(checkbox.getAttribute('data-addon-pct')) || 0;
+            if (row) row.classList.add('is-checked');
+          } else {
+            if (row) row.classList.remove('is-checked');
+          }
+        });
+
+        return {
+          pct: (isNaN(basePct) ? NaN : basePct + addonPct),
+          fixed: baseFixed,
+          symbol: preset.symbol
+        };
+      }
+
+      function updateModeUI() {
+        var isReverse = state.mode === 'reverse';
+        el.modeReverse.setAttribute('aria-pressed', isReverse ? 'true' : 'false');
+        el.modeStandard.setAttribute('aria-pressed', isReverse ? 'false' : 'true');
+
+        var labelSpan = el.amountLabel.querySelector('span:first-child');
+        if (labelSpan) {
+          labelSpan.textContent = isReverse ? 'Desired Net Payout' : 'Invoice Amount Charged';
+        }
+        el.amountHint.textContent = isReverse ? 'What you want to keep' : 'Total paid by your client';
+        el.primaryOutputLabel.textContent = isReverse ? 'Amount to Charge Client' : 'Your Net Payout';
+        el.counterpartLabel.textContent = isReverse ? 'Your Net Payout' : 'Amount Charged to Client';
+        el.counterpartOutput.className = isReverse ? 'metric-val is-net' : 'metric-val';
+      }
+
+      function updateCurrencyPadding(symbol) {
+        el.currencyPrefix.textContent = symbol;
+        var pad = symbol.length > 2 ? 58 : symbol.length === 2 ? 48 : 38;
+        el.amountInput.style.paddingLeft = pad + 'px';
+      }
+
+      function render() {
+        updateModeUI();
+        var active = getActiveRate();
+        updateCurrencyPadding(active.symbol);
+
+        el.customRateBox.hidden = state.region !== 'custom';
+
+        var rawVal = el.amountInput.value.trim();
+        var numericAmount = rawVal === '' ? 0 : parseFloat(rawVal);
+
+        if (rawVal !== '' && (isNaN(numericAmount) || numericAmount < 0)) {
+          el.validationMsg.textContent = 'Enter a valid amount of 0 or greater.';
+          el.validationMsg.hidden = false;
+          el.copyBtn.disabled = true;
+          return;
+        }
+
+        var result = calculateStripeFees({
+          mode: state.mode,
+          amount: numericAmount,
+          pct: active.pct,
+          fixed: active.fixed
+        });
+
+        if (!result.valid) {
+          el.validationMsg.textContent = result.error;
+          el.validationMsg.hidden = false;
+          el.copyBtn.disabled = true;
+          return;
+        }
+
+        el.validationMsg.hidden = true;
+        el.copyBtn.disabled = result.charge <= 0;
+
+        var sym = active.symbol;
+        var primaryNum = state.mode === 'reverse' ? result.charge : result.net;
+        var counterpartNum = state.mode === 'reverse' ? result.net : result.charge;
+        state.lastCopyValue = primaryNum.toFixed(2);
+
+        el.primaryOutputValue.textContent = formatMoney(primaryNum, sym);
+        el.feeOutput.textContent = formatMoney(result.fee, sym);
+        el.effectivePctOutput.textContent = formatPct(result.effectivePct);
+        el.counterpartOutput.textContent = formatMoney(counterpartNum, sym);
+        el.appliedFormulaText.textContent = formatRatePct(result.totalPct) + ' + ' + formatMoney(result.fixed, sym);
+
+        if (result.charge <= 0) {
+          el.outputSubnote.textContent = state.mode === 'reverse'
+            ? 'Enter the net payout you want to receive to see the exact client invoice total.'
+            : 'Enter an invoice amount to see your Stripe processing fee and net payout.';
+          el.proofEquation.textContent = 'Enter an amount above to preview the exact Stripe fee calculation.';
+          el.barNet.style.width = '100%';
+          el.barFee.style.width = '0%';
+          el.legendNet.textContent = 'You keep 0.00%';
+          el.legendFee.textContent = 'Stripe takes 0.00%';
+        } else {
+          el.proofEquation.textContent =
+            formatMoney(result.charge, sym) + ' × ' + formatRatePct(result.totalPct) +
+            ' + ' + formatMoney(result.fixed, sym) + ' = ' + formatMoney(result.fee, sym) +
+            ' fee → ' + formatMoney(result.net, sym) + ' net';
+          if (state.mode === 'reverse') {
+            el.outputSubnote.textContent =
+              'Invoice your client ' + formatMoney(result.charge, sym) +
+              ' so ' + formatMoney(result.net, sym) + ' lands in your bank account.';
+          } else if (result.net < 0) {
+            el.outputSubnote.textContent =
+              'At this amount, Stripe\'s fixed fee exceeds the invoice total.';
+          } else {
+            el.outputSubnote.textContent =
+              'Out of ' + formatMoney(result.charge, sym) + ' billed, you keep ' +
+              formatMoney(result.net, sym) + ' after ' + formatMoney(result.fee, sym) + ' in fees.';
+          }
+
+          var feeShare = Math.min(100, Math.max(0, result.effectivePct));
+          var netShare = Math.max(0, 100 - feeShare);
+          el.barNet.style.width = netShare.toFixed(2) + '%';
+          el.barFee.style.width = feeShare.toFixed(2) + '%';
+          el.legendNet.textContent = 'You keep ' + netShare.toFixed(2) + '%';
+          el.legendFee.textContent = 'Stripe takes ' + feeShare.toFixed(2) + '%';
+        }
+      }
+
+      function setMode(nextMode) {
+        if (state.mode === nextMode) return;
+        state.mode = nextMode;
+        render();
+      }
+
+      function copyResult() {
+        var textToCopy = state.lastCopyValue;
+        function onSuccess() {
+          el.copyBtn.classList.add('copied');
+          el.copyBtnText.textContent = 'Copied ' + el.primaryOutputValue.textContent;
+          el.copyLiveStatus.textContent = 'Copied ' + el.primaryOutputValue.textContent + ' to clipboard.';
+          clearTimeout(state.copyTimer);
+          state.copyTimer = setTimeout(function () {
+            el.copyBtn.classList.remove('copied');
+            el.copyBtnText.textContent = 'Copy Amount';
+          }, 1800);
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(textToCopy).then(onSuccess).catch(function () {
+            fallbackCopy(textToCopy, onSuccess);
+          });
+        } else {
+          fallbackCopy(textToCopy, onSuccess);
+        }
+      }
+
+      function fallbackCopy(text, callback) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand('copy');
+          callback();
+        } catch (err) {
+          el.copyLiveStatus.textContent = 'Copy failed. Select the amount manually.';
+        }
+        document.body.removeChild(ta);
+      }
+
+      function resetCalculator() {
+        state.mode = 'reverse';
+        state.region = 'us';
+        el.regionSelect.value = 'us';
+        el.amountInput.value = '1000';
+        el.customPct.value = '2.9';
+        el.customFixed.value = '0.30';
+        el.addons.forEach(function (cb) { cb.checked = false; });
+        render();
+        el.amountInput.focus();
+      }
+
+      // Event Listeners
+      el.modeReverse.addEventListener('click', function () { setMode('reverse'); });
+      el.modeStandard.addEventListener('click', function () { setMode('standard'); });
+      el.amountInput.addEventListener('input', render);
+      el.regionSelect.addEventListener('change', function () {
+        state.region = el.regionSelect.value;
+        render();
+      });
+      el.customPct.addEventListener('input', render);
+      el.customFixed.addEventListener('input', render);
+      el.addons.forEach(function (cb) {
+        cb.addEventListener('change', render);
+      });
+      el.copyBtn.addEventListener('click', copyResult);
+      el.resetBtn.addEventListener('click', resetCalculator);
+
+      Array.prototype.slice.call(document.querySelectorAll('[data-preset-amount]')).forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          el.amountInput.value = btn.getAttribute('data-preset-amount');
+          render();
+          el.amountInput.focus();
+        });
+      });
+
+      Array.prototype.slice.call(document.querySelectorAll('[data-load-us]')).forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          state.mode = 'reverse';
+          state.region = 'us';
+          el.regionSelect.value = 'us';
+          el.addons.forEach(function (cb) { cb.checked = false; });
+          el.amountInput.value = btn.getAttribute('data-load-us');
+          render();
+          var calcSection = document.getElementById('calculator');
+          if (calcSection && calcSection.scrollIntoView) {
+            calcSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+          el.amountInput.focus();
+        });
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
